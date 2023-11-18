@@ -26,7 +26,8 @@ func main() {
 	
 	router := gin.Default()
 
-	// Route handler 
+	// Route handler
+	router.GET("/", home)
 	router.GET("/tasks", getTasks)
 	router.GET("/tasks/:id", getTask)
 	router.PUT("/tasks/:id", updateTask)
@@ -35,6 +36,11 @@ func main() {
 	
 	router.Run() // Listen and serve on 0.0.0.0:8080
 
+}
+
+// Home page 
+func home(ctx *gin.Context) {
+	ctx.JSON(http.StatusOK, gin.H{"message": "Welcome to the task manager API"})
 }
 
 // Getting All tasks 

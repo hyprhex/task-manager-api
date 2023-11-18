@@ -23,31 +23,43 @@ var tasks = []Task {
 }
 
 func main() {
-	router := gin.Default()
 	
-	// Getting All tasks 
-	router.GET("/tasks", func(ctx *gin.Context) {
-		ctx.JSON(http.StatusOK, gin.H{"tasks": tasks})
-	})
+	router := gin.Default()
 
-	// Get a specific task 
-	router.GET("/tasks/:id", func(ctx *gin.Context) {
+	// Route handler 
+	router.GET("/tasks", getTasks)
+	router.GET("/tasks/:id", getTask)
+	router.PUT("/tasks/:id", updateTask)
+	router.DELETE("/tasks/:id", deleteTask)
+	router.POST("/tasks", createTask)
+	
+	router.Run() // Listen and serve on 0.0.0.0:8080
 
-		id := ctx.Param("id")
+}
 
-		for _, task := range tasks {
-			if task.ID == id {
-				ctx.JSON(http.StatusOK, task)
-				return
-			}
+// Getting All tasks 
+func getTasks(ctx *gin.Context) {
+	ctx.JSON(http.StatusOK, gin.H{"tasks": tasks})
+}
+
+// Get a specific task 
+func getTask(ctx *gin.Context) {
+
+	id := ctx.Param("id")
+
+	for _, task := range tasks {
+		if task.ID == id {
+			ctx.JSON(http.StatusOK, task)
+			return
 		}
+	}
 
-		ctx.JSON(http.StatusNotFound, gin.H{"error": "Task not found"})
+	ctx.JSON(http.StatusNotFound, gin.H{"error": "Task not found"})
 
-	})
+}
 
-	// Update a specific task
-	router.PUT("/tasks/:id", func(ctx *gin.Context) {
+// Update a specific task
+func updateTask(ctx *gin.Context) {
 
 		id := ctx.Param("id")
 
@@ -74,10 +86,10 @@ func main() {
 
 		ctx.JSON(http.StatusNotFound, gin.H{"message": "Task not found"})
 
-	})
+}
 
 	// Delete a specific task 
-	router.DELETE("/tasks/:id", func(ctx *gin.Context) {
+func deleteTask(ctx *gin.Context) {
 
 		id := ctx.Param("id")
 
@@ -91,10 +103,10 @@ func main() {
 
 		ctx.JSON(http.StatusNotFound, gin.H{"message": "Task not found"})
 
-	})
+}
 
 	// Create Task
-	router.POST("/tasks", func(ctx *gin.Context) {
+func createTask(ctx *gin.Context) {
 
 		var newTask Task
 
@@ -105,8 +117,5 @@ func main() {
 
 		tasks = append(tasks, newTask)
 		ctx.JSON(http.StatusCreated, gin.H{"message": "Task created"})
-
-	})
-
-	router.Run() // Listen and serve on 0.0.0.0:8080
 }
+

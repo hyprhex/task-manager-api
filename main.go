@@ -2,6 +2,7 @@ package main
 
 import (
 	"time"
+	"net/http"
 	"github.com/gin-gonic/gin"
 )
 
@@ -17,17 +18,16 @@ type Task struct {
 // Simple tasks 
 var tasks = []Task {
 	{ID: "1", Title: "Task 1", Description: "First Task", DueDate: time.Now(), Status: "Pending"},
-	{ID: "2", Title: "Task 2", Description: "Second Task", DueDate: time.Now().AddDate(0, 0, 1), Status: "Pending"},
-	{ID: "3", Title: "Task 3", Description: "Third Task", DueDate: time.Now().AddDate(0, 0, 2), Status: "Pending"},
+	{ID: "2", Title: "Task 2", Description: "Second Task", DueDate: time.Now().AddDate(0, 0, 1), Status: "In Progress"},
+	{ID: "3", Title: "Task 3", Description: "Third Task", DueDate: time.Now().AddDate(0, 0, 2), Status: "Completed"},
 }
 
 func main() {
 	router := gin.Default()
-	router.GET("/ping", func (ctx *gin.Context)  {
-		ctx.JSON(200, gin.H{
-			"message": "poing",
-		})	
+	
+	// Getting All tasks 
+	router.GET("/tasks", func(ctx *gin.Context) {
+		ctx.JSON(http.StatusOK, gin.H{"tasks": tasks})
 	})
-
 	router.Run() // Listen and serve on 0.0.0.0:8080
 }

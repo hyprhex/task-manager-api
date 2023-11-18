@@ -76,5 +76,22 @@ func main() {
 
 	})
 
+	// Delete a specific task 
+	router.DELETE("/tasks/:id", func(ctx *gin.Context) {
+
+		id := ctx.Param("id")
+
+		for i, val := range tasks {
+			if val.ID == id {
+				tasks = append(tasks[:i], tasks[i+1:]...)
+				ctx.JSON(http.StatusOK, gin.H{"message": "Task removed"})
+				return
+			}
+		}
+
+		ctx.JSON(http.StatusNotFound, gin.H{"message": "Task not found"})
+
+	})
+
 	router.Run() // Listen and serve on 0.0.0.0:8080
 }

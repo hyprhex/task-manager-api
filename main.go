@@ -46,5 +46,35 @@ func main() {
 
 	})
 
+	// Update a specific task
+	router.PUT("/tasks/:id", func(ctx *gin.Context) {
+
+		id := ctx.Param("id")
+
+		var updatedTask Task
+
+		if err := ctx.ShouldBindJSON(&updatedTask); err != nil {
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+
+		for i, task := range tasks {
+			if task.ID == id {
+				if updatedTask.Title != "" {
+					tasks[i].Title = updatedTask.Title
+				}
+				if updatedTask.Description != "" {
+					tasks[i].Description = updatedTask.Description
+				}
+
+				ctx.JSON(http.StatusOK, gin.H{"message": "Task updated"})
+				return
+			}
+		}
+
+		ctx.JSON(http.StatusNotFound, gin.H{"message": "Task not found"})
+
+	})
+
 	router.Run() // Listen and serve on 0.0.0.0:8080
 }

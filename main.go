@@ -29,5 +29,22 @@ func main() {
 	router.GET("/tasks", func(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, gin.H{"tasks": tasks})
 	})
+
+	// Get a specific task 
+	router.GET("/tasks/:id", func(ctx *gin.Context) {
+
+		id := ctx.Param("id")
+
+		for _, task := range tasks {
+			if task.ID == id {
+				ctx.JSON(http.StatusOK, task)
+				return
+			}
+		}
+
+		ctx.JSON(http.StatusNotFound, gin.H{"error": "Task not found"})
+
+	})
+
 	router.Run() // Listen and serve on 0.0.0.0:8080
 }

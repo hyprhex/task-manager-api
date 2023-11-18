@@ -2,9 +2,13 @@
 
 Creating powerful and efficient REST API using Go + Gin framework
 
-## Install Go
+## What you can do 
 
-[Install Go](https://go.dev/doc/install)
+- Get all tasks 
+- Get a specific task 
+- Update a specific task 
+- Delete a specific task 
+- Create a new task 
 
 ## API Endpoint 
 
@@ -17,3 +21,13 @@ Creating powerful and efficient REST API using Go + Gin framework
 ## Task Parameter
 
 Every Task has: `Title | Description | DueDate | Status`
+
+## Usage 
+
+Make sure that you have Go installed: `Go`
+1. Clone the repo: `git clone https://github.com/AIpill/task-manager-api`
+2. Go inside: `cd task-manager-api`
+3. Install dependencies: `go get`
+4. Run the server: `go run main.go`
+5. Check: `http://0.0.0.0:8080`
+

@@ -1,9 +1,15 @@
 package main
 
 import (
+	"database/sql"
 	"time"
 	"net/http"
 	"github.com/gin-gonic/gin"
+
+	"github.com/uptrace/bun"
+	"github.com/uptrace/bun/dialect/pgdialect"
+	"github.com/uptrace/bun/driver/pgdriver"
+	"github.com/uptrace/bun/extra/bundebug"
 )
 
 // Tasks parameter 

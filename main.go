@@ -93,5 +93,20 @@ func main() {
 
 	})
 
+	// Create Task
+	router.POST("/tasks", func(ctx *gin.Context) {
+
+		var newTask Task
+
+		if err := ctx.ShouldBindJSON(&newTask); err != nil {
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+
+		tasks = append(tasks, newTask)
+		ctx.JSON(http.StatusCreated, gin.H{"message": "Task created"})
+
+	})
+
 	router.Run() // Listen and serve on 0.0.0.0:8080
 }

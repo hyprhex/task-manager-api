@@ -165,17 +165,29 @@ func updateTask(ctx *gin.Context) {
 	// Delete a specific task 
 func deleteTask(ctx *gin.Context) {
 
-		id := ctx.Param("id")
+	taskID := ctx.Param("id")
 
-		for i, val := range tasks {
-			if val.ID == id {
-				tasks = append(tasks[:i], tasks[i+1:]...)
-				ctx.JSON(http.StatusOK, gin.H{"message": "Task removed"})
-				return
-			}
-		}
+	task := &Task{}
 
+	res, err := db.NewDelete().Model(task).Where("id = ?", taskID).Exec(ctx.Request.Context())
+
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	rowsAffected, err := res.RowsAffected()
+
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	if rowsAffected > 0 {
+		ctx.JSON(http.StatusOK, gin.H{"message": "Task removed"})
+	} else {
 		ctx.JSON(http.StatusNotFound, gin.H{"message": "Task not found"})
+	}
 
 }
 

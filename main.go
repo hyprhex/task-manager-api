@@ -87,7 +87,18 @@ func home(ctx *gin.Context) {
 
 // Getting All tasks 
 func getTasks(ctx *gin.Context) {
+
+	var tasks []Task
+
+	err := db.NewSelect().Model(&tasks).Scan(ctx.Request.Context())
+
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
 	ctx.JSON(http.StatusOK, gin.H{"tasks": tasks})
+
 }
 
 // Get a specific task 

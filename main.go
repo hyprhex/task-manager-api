@@ -104,16 +104,29 @@ func getTasks(ctx *gin.Context) {
 // Get a specific task 
 func getTask(ctx *gin.Context) {
 
-	id := ctx.Param("id")
+	taskID :=	ctx.Param("id")
 
-	for _, task := range tasks {
-		if task.ID == id {
-			ctx.JSON(http.StatusOK, task)
-			return
-		}
+	if taskID == "" {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "ID must be present"})
+		return
 	}
 
-	ctx.JSON(http.StatusNotFound, gin.H{"error": "Task not found"})
+	task := &Task{}
+
+	err := db.NewSelect().Model(task).Where("id = ?", taskID).Scan(ctx.Request.Context())
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	if task.ID == "" {
+		ctx.JSON(http.StatusNotFound, gin.H{"message": "Task not found"})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, task)
+
+
 
 }
 

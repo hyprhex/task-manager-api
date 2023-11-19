@@ -133,30 +133,32 @@ func getTask(ctx *gin.Context) {
 // Update a specific task
 func updateTask(ctx *gin.Context) {
 
-		id := ctx.Param("id")
+	taskID := ctx.Param("id")
 
-		var updatedTask Task
+	if taskID == "" {
+		ctx.JSON(http.StatusNoContent, gin.H{"error": "ID must be present"})
+		return
+	}
 
-		if err := ctx.ShouldBindJSON(&updatedTask); err != nil {
-			ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-			return
-		}
+	updatedTask := &Task{}
 
-		for i, task := range tasks {
-			if task.ID == id {
-				if updatedTask.Title != "" {
-					tasks[i].Title = updatedTask.Title
-				}
-				if updatedTask.Description != "" {
-					tasks[i].Description = updatedTask.Description
-				}
+	if err := ctx.ShouldBindJSON(updatedTask); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
 
-				ctx.JSON(http.StatusOK, gin.H{"message": "Task updated"})
-				return
-			}
-		}
+	_, err := db.NewUpdate().Model(updatedTask).
+		Set("title = ?", updatedTask.Title).
+		Set("description = ?", updatedTask.Description).
+		Where("id = ?", taskID).
+		Exec(ctx.Request.Context())
 
-		ctx.JSON(http.StatusNotFound, gin.H{"message": "Task not found"})
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"message": "Task updated"})
 
 }
 

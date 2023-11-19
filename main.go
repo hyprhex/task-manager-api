@@ -1,6 +1,8 @@
 package main
 
 import (
+	"context"
+	"fmt"
 	"database/sql"
 	"time"
 	"net/http"
@@ -28,8 +30,42 @@ var tasks = []Task {
 	{ID: "3", Title: "Task 3", Description: "Third Task", DueDate: time.Now().AddDate(0, 0, 2), Status: "Completed"},
 }
 
+var db *bun.DB
+
 func main() {
+
+	// Connect to the PostgreSQL database
+	ctx := context.Background()
+	dsn := "postgres://postgres:root@localhost:5432/task_manager_api?sslmode=disable"
+	sqldb := sql.OpenDB(pgdriver.NewConnector(pgdriver.WithDSN(dsn)))
+	db = bun.NewDB(sqldb, pgdialect.New())
+
+	// Create the tasks table if not exist 
+	_, err := db.NewCreateTable().Model((*Task)(nil)).IfNotExists().Exec(ctx)
+
+	if err != nil {
+		fmt.Println("Failed to create table:", err)
+		return
+	}
+
+	// Add a query for logging 
+	db.AddQueryHook(bundebug.NewQueryHook(
+		bundebug.WithVerbose(true),
+		bundebug.FromEnv("BUNDEBUG"),
+	))
+
+	// Ping the database to test the connections 
+
+	err = db.Ping()
+
+	if err != nil {
+		fmt.Println("Failed to connect to the database")
+		return
+	}
 	
+	// Connection successful
+	fmt.Println("Connected to database")
+
 	router := gin.Default()
 
 	// Route handler

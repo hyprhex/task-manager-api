@@ -194,14 +194,22 @@ func deleteTask(ctx *gin.Context) {
 	// Create Task
 func createTask(ctx *gin.Context) {
 
-		var newTask Task
+	newTask := &Task{}
 
-		if err := ctx.ShouldBindJSON(&newTask); err != nil {
-			ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-			return
-		}
+	if err := ctx.ShouldBindJSON(&newTask); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
 
-		tasks = append(tasks, newTask)
-		ctx.JSON(http.StatusCreated, gin.H{"message": "Task created"})
+	_, err :=	db.NewInsert().Model(newTask).Exec(ctx.Request.Context())
+
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusCreated, gin.H{"message": "Task created"})
+
+
 }
 

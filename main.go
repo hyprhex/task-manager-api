@@ -23,13 +23,6 @@ type Task struct {
 	Status				string `json:"status"`
 }
 
-// Simple tasks 
-var tasks = []Task {
-	{ID: "1", Title: "Task 1", Description: "First Task", DueDate: time.Now(), Status: "Pending"},
-	{ID: "2", Title: "Task 2", Description: "Second Task", DueDate: time.Now().AddDate(0, 0, 1), Status: "In Progress"},
-	{ID: "3", Title: "Task 3", Description: "Third Task", DueDate: time.Now().AddDate(0, 0, 2), Status: "Completed"},
-}
-
 var db *bun.DB
 
 func main() {

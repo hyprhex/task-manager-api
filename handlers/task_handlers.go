@@ -22,7 +22,7 @@ func GetTasks(ctx *gin.Context) {
 
 	var tasks []model.Task
 
-	err := db.NewSelect().Model(&tasks).Scan(ctx.Request.Context())
+	err := DB.NewSelect().Model(&tasks).Scan(ctx.Request.Context())
 
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -45,7 +45,7 @@ func GetTask(ctx *gin.Context) {
 
 	task := &model.Task{}
 
-	err := db.NewSelect().Model(task).Where("id = ?", taskID).Scan(ctx.Request.Context())
+	err := DB.NewSelect().Model(task).Where("id = ?", taskID).Scan(ctx.Request.Context())
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -79,7 +79,7 @@ func UpdateTask(ctx *gin.Context) {
 		return
 	}
 
-	_, err := db.NewUpdate().Model(updatedTask).
+	_, err := DB.NewUpdate().Model(updatedTask).
 		Set("title = ?", updatedTask.Title).
 		Set("description = ?", updatedTask.Description).
 		Where("id = ?", taskID).
@@ -101,7 +101,7 @@ func DeleteTask(ctx *gin.Context) {
 
 	task := &model.Task{}
 
-	res, err := db.NewDelete().Model(task).Where("id = ?", taskID).Exec(ctx.Request.Context())
+	res, err := DB.NewDelete().Model(task).Where("id = ?", taskID).Exec(ctx.Request.Context())
 
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -133,7 +133,7 @@ func CreateTask(ctx *gin.Context) {
 		return
 	}
 
-	_, err :=	db.NewInsert().Model(newTask).Exec(ctx.Request.Context())
+	_, err :=	DB.NewInsert().Model(newTask).Exec(ctx.Request.Context())
 
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

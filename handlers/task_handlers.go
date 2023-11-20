@@ -10,7 +10,7 @@ import (
 
 )
 
-var db *bun.DB
+var DB *bun.DB
 
 // Home page 
 func Home(ctx *gin.Context) {
